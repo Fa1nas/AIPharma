@@ -1,0 +1,104 @@
+﻿@model AIPharma.Models.Product
+
+@{
+    ViewData["Title"] = Model.Name;
+    var actualPrice = Model.DiscountPrice ?? Model.Price;
+}
+
+<section class="product-details">
+    <div class="details-left">
+        <div class="big-product-image product-details-image">
+            <img src="@Model.ImagePath"
+                 alt="@Model.Name"
+                 referrerpolicy="no-referrer"
+                 onerror="this.src='/images/products/default.png'" />
+        </div>
+    </div>
+
+    <div class="details-right">
+        <h1>@Model.Name</h1>
+        <p class="category">@Model.ProductCategory?.Name</p>
+        <p><strong>Виробник:</strong> @Model.Manufacturer</p>
+
+        <div class="price-block">
+            @if (Model.DiscountPrice != null)
+            {
+                <span class="old-price">@Model.Price грн</span>
+                <span class="discount-price">@Model.DiscountPrice грн</span>
+            }
+            else
+            {
+                <span class="price">@Model.Price грн</span>
+            }
+        </div>
+
+        @if (Model.IsPrescriptionRequired)
+        {
+            <p class="warning">
+                Увага: цей товар може відпускатися за рецептом.
+            </p>
+        }
+
+        <p class="description-full">@Model.Description</p>
+
+        <div class="details-actions">
+            <a class="btn-secondary" asp-controller="Profile" asp-action="AddFavorite" asp-route-productId="@Model.Id">
+                Додати в обране
+            </a>
+
+            <a class="btn-secondary" asp-controller="Profile" asp-action="AddCompare" asp-route-productId="@Model.Id">
+                Додати до порівняння
+            </a>
+        </div>
+    </div>
+</section>
+
+@if (TempData["OrderError"] != null)
+{
+    <div class="error-message">
+        @TempData["OrderError"]
+    </div>
+}
+
+<section class="availability-section">
+    <h2>Наявність у аптеках</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Аптека</th>
+                <th>Адреса</th>
+                <th>Графік</th>
+                <th>Кількість</th>
+                <th>Замовлення</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var stock in Model.ProductStocks.OrderByDescending(s => s.Quantity))
+            {
+                <tr>
+                    <td>@stock.Pharmacy?.Name</td>
+                    <td>@stock.Pharmacy?.Address</td>
+                    <td>@stock.Pharmacy?.WorkSchedule</td>
+                    <td>@stock.Quantity шт.</td>
+                    <td>
+                        @if (stock.Quantity > 0)
+                        {
+                            <form asp-controller="Orders" asp-action="Create" method="post" class="order-form">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <input type="hidden" name="pharmacyId" value="@stock.PharmacyId" />
+
+                                <input type="number" name="quantity" value="1" min="1" max="@stock.Quantity" class="quantity-input" />
+
+                                <button type="submit" class="btn-small order-btn">Оформити</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Немає в наявності</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

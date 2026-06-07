@@ -1,0 +1,34 @@
+﻿@model AIPharma.Models.Complaint
+
+@{
+    ViewData["Title"] = "Деталі звернення";
+}
+
+<section class="page-header">
+    <h1>Звернення №@Model.Id</h1>
+    <p>Детальна інформація про звернення користувача.</p>
+</section>
+
+<section class="profile-grid">
+    <div class="profile-card">
+        <h3>Основна інформація</h3>
+        <p><strong>Тема:</strong> @Model.Title</p>
+        <p><strong>Статус:</strong> @Model.Status</p>
+        <p><strong>Дата створення:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Аптека</h3>
+        <p><strong>Назва:</strong> @Model.Pharmacy?.Name</p>
+        <p><strong>Адреса:</strong> @Model.Pharmacy?.Address</p>
+        <p><strong>Телефон:</strong> @Model.Pharmacy?.Phone</p>
+        <p><strong>Графік:</strong> @Model.Pharmacy?.WorkSchedule</p>
+    </div>
+</section>
+
+<section class="note-section">
+    <h2>Текст звернення</h2>
+    <p>@Model.Text</p>
+</section>
+
+<a class="btn-primary" asp-controller="Complaints" asp-action="Index">До моїх звернень</a>

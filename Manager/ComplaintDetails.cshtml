@@ -1,0 +1,55 @@
+﻿@model AIPharma.Models.Complaint
+
+@{
+    ViewData["Title"] = "Деталі звернення менеджера";
+}
+
+<section class="page-header">
+    <h1>Звернення №@Model.Id</h1>
+    <p>Менеджер може змінювати статус звернення по своїй аптеці.</p>
+</section>
+
+<section class="profile-grid">
+    <div class="profile-card">
+        <h3>Користувач</h3>
+        <p><strong>ПІБ:</strong> @Model.User?.FullName</p>
+        <p><strong>Email:</strong> @Model.User?.Email</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Аптека</h3>
+        <p><strong>Назва:</strong> @Model.Pharmacy?.Name</p>
+        <p><strong>Адреса:</strong> @Model.Pharmacy?.Address</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Статус звернення</h3>
+
+        <form asp-controller="Manager" asp-action="UpdateComplaintStatus" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+
+            <select name="status">
+                @foreach (var status in new[] { "Нова", "В обробці", "Вирішено", "Відхилено" })
+                {
+                    if (Model.Status == status)
+                    {
+                        <option value="@status" selected>@status</option>
+                    }
+                    else
+                    {
+                        <option value="@status">@status</option>
+                    }
+                }
+            </select>
+
+            <button type="submit" class="btn-primary full-width">Оновити статус</button>
+        </form>
+    </div>
+</section>
+
+<section class="note-section">
+    <h2>@Model.Title</h2>
+    <p>@Model.Text</p>
+</section>
+
+<a class="btn-primary" asp-controller="Manager" asp-action="Complaints">Назад до звернень</a>

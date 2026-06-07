@@ -1,0 +1,59 @@
+﻿@model List<AIPharma.Models.ProductComparison>
+
+@{
+    ViewData["Title"] = "Порівняння товарів";
+}
+
+<section class="page-header">
+    <h1>Порівняння товарів</h1>
+    <p>Порівняння ціни, категорії, виробника та наявності обраних товарів.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="note-section">
+        <p>Список порівняння порожній.</p>
+        <a class="btn-primary" asp-controller="Products" asp-action="Index">Перейти до каталогу</a>
+    </div>
+}
+else
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Категорія</th>
+                <th>Виробник</th>
+                <th>Ціна</th>
+                <th>Знижка</th>
+                <th>Рецептурний</th>
+                <th>Наявність</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var product = item.Product;
+                if (product == null)
+                {
+                    continue;
+                }
+
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.ProductCategory?.Name</td>
+                    <td>@product.Manufacturer</td>
+                    <td>@product.Price грн</td>
+                    <td>@(product.DiscountPrice != null ? product.DiscountPrice + " грн" : "-")</td>
+                    <td>@(product.IsPrescriptionRequired ? "Так" : "Ні")</td>
+                    <td>@product.ProductStocks.Sum(s => s.Quantity) шт.</td>
+                    <td>
+                        <a class="btn-small" asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">Перегляд</a>
+                        <a class="btn-small" asp-controller="Profile" asp-action="RemoveCompare" asp-route-productId="@product.Id">Видалити</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

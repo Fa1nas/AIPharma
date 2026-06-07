@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Створити звернення";
+    var pharmacies = ViewBag.Pharmacies as List<AIPharma.Models.Pharmacy>;
+    int? selectedPharmacyId = ViewBag.SelectedPharmacyId as int?;
+}
+
+<section class="page-header">
+    <h1>Створити звернення</h1>
+    <p>Оберіть аптеку та опишіть проблему або зауваження щодо її роботи.</p>
+</section>
+
+<section class="form-section">
+    <div class="form-card">
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        <form method="post">
+            <label>Аптека</label>
+            <select name="pharmacyId">
+                <option value="">Оберіть аптеку</option>
+
+                @foreach (var pharmacy in pharmacies ?? new List<AIPharma.Models.Pharmacy>())
+                {
+                    if (selectedPharmacyId == pharmacy.Id)
+                    {
+                        <option value="@pharmacy.Id" selected>@pharmacy.Name — @pharmacy.Address</option>
+                    }
+                    else
+                    {
+                        <option value="@pharmacy.Id">@pharmacy.Name — @pharmacy.Address</option>
+                    }
+                }
+            </select>
+
+            <label>Тема звернення</label>
+            <input type="text" name="title" placeholder="Наприклад: Довге очікування замовлення" />
+
+            <label>Текст звернення</label>
+            <textarea name="text" rows="6" placeholder="Опишіть ситуацію детальніше..."></textarea>
+
+            <button type="submit" class="btn-primary">Надіслати звернення</button>
+        </form>
+    </div>
+</section>

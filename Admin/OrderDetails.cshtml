@@ -1,0 +1,80 @@
+﻿@model AIPharma.Models.Order
+
+@{
+    ViewData["Title"] = "Замовлення адміністратора";
+}
+
+<section class="page-header">
+    <h1>Замовлення №@Model.Id</h1>
+    <p>Детальна інформація про замовлення користувача.</p>
+</section>
+
+<section class="profile-grid">
+    <div class="profile-card">
+        <h3>Користувач</h3>
+        <p><strong>ПІБ:</strong> @Model.User?.FullName</p>
+        <p><strong>Email:</strong> @Model.User?.Email</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Аптека</h3>
+        <p><strong>Назва:</strong> @Model.Pharmacy?.Name</p>
+        <p><strong>Адреса:</strong> @Model.Pharmacy?.Address</p>
+        <p><strong>Телефон:</strong> @Model.Pharmacy?.Phone</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Статус замовлення</h3>
+
+        <form asp-controller="Admin" asp-action="UpdateOrderStatus" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+
+            <select name="status">
+                @foreach (var status in new[] { "Новий", "Підтверджено", "Готовий до видачі", "Виконано", "Скасовано" })
+                {
+                    if (Model.Status == status)
+                    {
+                        <option value="@status" selected>@status</option>
+                    }
+                    else
+                    {
+                        <option value="@status">@status</option>
+                    }
+                }
+            </select>
+
+            <button type="submit" class="btn-primary full-width">Оновити статус</button>
+        </form>
+    </div>
+</section>
+
+<section class="note-section">
+    <h2>Товари в замовленні</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Кількість</th>
+                <th>Ціна</th>
+                <th>Сума</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Product?.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice грн</td>
+                    <td>@(item.UnitPrice * item.Quantity) грн</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p><strong>Загальна сума:</strong> @Model.TotalAmount грн</p>
+    <p><strong>Оплата:</strong> @Model.PaymentType</p>
+</section>
+
+<a class="btn-primary" asp-controller="Admin" asp-action="Orders">Назад до замовлень</a>

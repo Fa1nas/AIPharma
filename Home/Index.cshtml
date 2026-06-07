@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "AIPharma";
+}
+
+<section class="hero hero-red">
+    <div class="hero-content">
+        <div class="hero-badge">Мережа аптек у місті</div>
+
+        <h1>AIPharma — зручний сервіс для пошуку та замовлення аптечних товарів</h1>
+
+        <p>
+            AIPharma допомагає швидко знайти потрібний товар, перевірити його наявність
+            у різних аптеках міста, переглянути актуальні знижки та оформити замовлення
+            для отримання у вибраній аптеці.
+        </p>
+
+        <p>
+            У місті працює декілька аптек мережі, розташованих у різних районах.
+            У каталозі доступні товари різних груп і виробників: засоби від застуди,
+            вітаміни, доглядова продукція, товари для дітей, засоби гігієни та інші категорії.
+        </p>
+
+        <p>
+            Якщо потрібна додаткова допомога з пошуком товару, наявністю, знижками або
+            оформленням замовлення, можна звернутися до AI-консультанта на сайті.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn-primary" asp-controller="Products" asp-action="Index">Перейти до каталогу</a>
+            <a class="btn-secondary" asp-controller="Pharmacies" asp-action="Index">Знайти аптеку</a>
+        </div>
+    </div>
+
+    <div class="hero-visual">
+        <div class="pharma-cross">✚</div>
+        <div class="hero-visual-text">
+            <strong>AIPharma</strong>
+            <span>каталог • аптеки • замовлення • AI-консультант</span>
+        </div>
+    </div>
+</section>

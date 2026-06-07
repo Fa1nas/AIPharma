@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Додати товар";
+    var categories = ViewBag.Categories as List<AIPharma.Models.ProductCategory>;
+}
+
+<section class="page-header">
+    <h1>Додати товар</h1>
+    <p>Новий товар буде доданий до каталогу AIPharma, а залишки для аптек створяться автоматично з кількістю 0.</p>
+</section>
+
+<section class="form-section">
+    <div class="form-card">
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        <form method="post">
+            <label>Назва товару</label>
+            <input type="text" name="name" />
+
+            <label>Категорія</label>
+            <select name="productCategoryId">
+                <option value="">Оберіть категорію</option>
+                @foreach (var category in categories ?? new List<AIPharma.Models.ProductCategory>())
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+
+            <label>Виробник</label>
+            <input type="text" name="manufacturer" />
+
+            <label>Опис</label>
+            <textarea name="description" rows="5"></textarea>
+
+            <label>Ціна, грн</label>
+            <input type="number" name="price" min="0" step="0.01" />
+
+            <label>Ціна зі знижкою, грн</label>
+            <input type="number" name="discountPrice" min="0" step="0.01" />
+
+            <label class="checkbox-row">
+                <input type="checkbox" name="isPrescriptionRequired" value="true" />
+                Рецептурний товар
+            </label>
+
+            <button type="submit" class="btn-primary">Додати товар</button>
+        </form>
+    </div>
+</section>

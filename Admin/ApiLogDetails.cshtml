@@ -1,0 +1,38 @@
+﻿@model AIPharma.Models.ApiRequestLog
+
+@{
+    ViewData["Title"] = "Деталі AI-запиту";
+}
+
+<section class="page-header">
+    <h1>AI-запит №@Model.Id</h1>
+    <p>Детальна інформація про обробку запиту інтелектуальним модулем.</p>
+</section>
+
+<section class="profile-grid">
+    <div class="profile-card">
+        <h3>Користувач</h3>
+        <p><strong>ПІБ:</strong> @Model.User?.FullName</p>
+        <p><strong>Email:</strong> @Model.User?.Email</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Обробка</h3>
+        <p><strong>Джерело:</strong> <span class="source-label">@Model.Source</span></p>
+        <p><strong>Prompt tokens:</strong> @Model.PromptTokens</p>
+        <p><strong>Completion tokens:</strong> @Model.CompletionTokens</p>
+        <p><strong>Дата:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+    </div>
+</section>
+
+<section class="note-section">
+    <h2>Запит користувача</h2>
+    <p>@Model.RequestText</p>
+</section>
+
+<section class="note-section">
+    <h2>Відповідь системи</h2>
+    <p>@Model.ResponseText</p>
+</section>
+
+<a class="btn-primary" asp-controller="Admin" asp-action="ApiLogs">Назад до логів</a>

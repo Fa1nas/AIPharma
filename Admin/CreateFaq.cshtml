@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Додати FAQ";
+}
+
+<section class="page-header">
+    <h1>Додати FAQ-відповідь</h1>
+    <p>Ця відповідь буде використовуватися AI-помічником перед зверненням до LLM API.</p>
+</section>
+
+<section class="form-section">
+    <div class="form-card">
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        <form method="post">
+            <label>Категорія</label>
+            <input type="text" name="category" placeholder="Наприклад: Замовлення" />
+
+            <label>Питання</label>
+            <input type="text" name="question" />
+
+            <label>Відповідь</label>
+            <textarea name="answer" rows="7"></textarea>
+
+            <button type="submit" class="btn-primary">Додати відповідь</button>
+        </form>
+    </div>
+</section>

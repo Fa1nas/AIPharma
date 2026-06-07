@@ -1,0 +1,49 @@
+﻿@model List<AIPharma.Models.Pharmacy>
+
+@{
+    ViewData["Title"] = "Аптеки AIPharma";
+}
+
+<section class="page-header">
+    <h1>Аптеки AIPharma у місті</h1>
+    <p>Мережа аптек розташована у різних районах міста для зручного отримання замовлень.</p>
+</section>
+
+<section class="map-section">
+    <h2>Карта аптек AIPharma</h2>
+
+    <div class="google-map-wrapper">
+        <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1_Lz8-F2KB9pZ4DAJE65WOpvD7VSFcu8&ehbc=2E312F"
+            width="640" 
+            height="480">
+        </iframe>
+        <iframe src="СЮДА_ВСТАВЬ_SRC_ИЗ_GOOGLE_MY_MAPS"
+                width="100%"
+                height="420"
+                style="border:0;"
+                loading="lazy"
+                allowfullscreen>
+        </iframe>
+    </div>
+</section>
+
+<section>
+    <h2>Список аптек</h2>
+
+    <div class="pharmacy-grid">
+        @foreach (var pharmacy in Model)
+        {
+            <div class="pharmacy-card">
+                <h3>@pharmacy.Name</h3>
+                <p><strong>Адреса:</strong> @pharmacy.Address</p>
+                <p><strong>Телефон:</strong> @pharmacy.Phone</p>
+                <p><strong>Графік роботи:</strong> @pharmacy.WorkSchedule</p>
+                <p><strong>Координати:</strong> @pharmacy.Latitude, @pharmacy.Longitude</p>
+                <p><strong>Кількість товарних позицій:</strong> @pharmacy.ProductStocks.Count</p>
+                <a class="btn-secondary" asp-controller="Complaints" asp-action="Create" asp-route-pharmacyId="@pharmacy.Id">
+                    Залишити звернення
+                </a>
+            </div>
+        }
+    </div>
+</section>

@@ -1,0 +1,45 @@
+﻿@model List<AIPharma.Models.Employee>
+
+@{
+    ViewData["Title"] = "Працівники аптеки";
+}
+
+<section class="page-header">
+    <h1>Працівники аптеки</h1>
+    <p>Менеджер може переглядати працівників своєї аптеки та змінювати їх годинну ставку.</p>
+</section>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ПІБ</th>
+            <th>Посада</th>
+            <th>Поточна ставка</th>
+            <th>Відпрацьовано годин</th>
+            <th>Розрахована зарплата</th>
+            <th>Зміна ставки</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            var hours = employee.WorkLogs.Sum(w => w.HoursWorked);
+            var salary = hours * employee.HourlyRate;
+
+            <tr>
+                <td>@employee.FullName</td>
+                <td>@employee.Position</td>
+                <td>@employee.HourlyRate грн</td>
+                <td>@hours</td>
+                <td>@salary грн</td>
+                <td>
+                    <form asp-controller="Manager" asp-action="UpdateEmployeeRate" method="post" class="order-form">
+                        <input type="hidden" name="employeeId" value="@employee.Id" />
+                        <input type="number" name="hourlyRate" value="@employee.HourlyRate" min="0" step="1" class="quantity-input" />
+                        <button type="submit" class="btn-small order-btn">Зберегти</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

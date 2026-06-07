@@ -1,0 +1,53 @@
+﻿@model AIPharma.Models.ChatSession
+
+@{
+    ViewData["Title"] = "Деталі AI-діалогу";
+}
+
+<section class="page-header">
+    <h1>AI-діалог №@Model.Id</h1>
+    <p>Детальна історія повідомлень користувача з інтелектуальним помічником.</p>
+</section>
+
+<section class="profile-grid">
+    <div class="profile-card">
+        <h3>Користувач</h3>
+        <p><strong>ПІБ:</strong> @Model.User?.FullName</p>
+        <p><strong>Email:</strong> @Model.User?.Email</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Сесія</h3>
+        <p><strong>Назва:</strong> @Model.Title</p>
+        <p><strong>Дата створення:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+        <p><strong>Повідомлень:</strong> @Model.Messages.Count</p>
+    </div>
+</section>
+
+<section class="note-section">
+    <h2>Повідомлення діалогу</h2>
+
+    <div class="admin-chat-view">
+        @foreach (var message in Model.Messages.OrderBy(m => m.CreatedAt))
+        {
+            if (message.Sender == "User")
+            {
+                <div class="admin-user-message">
+                    <strong>Користувач</strong>
+                    <span>@message.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                    <p>@message.Text</p>
+                </div>
+            }
+            else
+            {
+                <div class="admin-assistant-message">
+                    <strong>AIPharma <span class="source-label">@message.Source</span></strong>
+                    <span>@message.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                    <p>@message.Text</p>
+                </div>
+            }
+        }
+    </div>
+</section>
+
+<a class="btn-primary" asp-controller="Admin" asp-action="AiDialogs">Назад до AI-діалогів</a>

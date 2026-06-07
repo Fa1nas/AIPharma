@@ -1,0 +1,89 @@
+﻿@model AIPharma.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Адмін-панель";
+}
+
+<section class="page-header">
+    <h1>Адмін-панель AIPharma</h1>
+    <p>Панель керування товарами, замовленнями, зверненнями, FAQ, AI-модулем та статистикою системи.</p>
+</section>
+
+<section class="admin-stat-grid">
+    <div class="admin-stat-card">
+        <h3>@Model.UsersCount</h3>
+        <p>Користувачів</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.ProductsCount</h3>
+        <p>Товарів</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.PharmaciesCount</h3>
+        <p>Аптек</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.OrdersCount</h3>
+        <p>Замовлень</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.ComplaintsCount</h3>
+        <p>Звернень</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.FaqCount</h3>
+        <p>FAQ-відповідей</p>
+    </div>
+</section>
+
+<section class="admin-menu-grid">
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="Orders">
+        <h3>Замовлення</h3>
+        <p>Перегляд усіх замовлень та зміна їх статусів.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="Complaints">
+        <h3>Звернення</h3>
+        <p>Перегляд скарг користувачів по аптеках.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="Statistics">
+        <h3>Статистика</h3>
+        <p>Аналітика по аптеках, товарах, AI та працівниках.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="Products">
+        <h3>Товари</h3>
+        <p>Додавання товарів, зміна ціни, опису, категорії та знижки.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="Stocks">
+        <h3>Залишки</h3>
+        <p>Керування кількістю товарів у кожній аптеці.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="Faq">
+        <h3>FAQ / база знань</h3>
+        <p>Універсальні відповіді, які AI-помічник використовує перед зверненням до LLM API.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="AiDialogs">
+        <h3>AI-діалоги</h3>
+        <p>Перегляд історії діалогів користувачів з інтелектуальним помічником.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="AiCache">
+        <h3>Кеш відповідей</h3>
+        <p>Повторно використані відповіді, які зберігаються для економії API-запитів.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Admin" asp-action="ApiLogs">
+        <h3>Логи AI-запитів</h3>
+        <p>Журнал відповідей з джерелами FAQ, CACHE, MOCK або LLM.</p>
+    </a>
+</section>

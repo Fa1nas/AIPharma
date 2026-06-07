@@ -1,0 +1,54 @@
+﻿@model List<AIPharma.Models.Product>
+
+@{
+    ViewData["Title"] = "Керування товарами";
+}
+
+<section class="page-header">
+    <h1>Керування товарами</h1>
+    <p>Адміністратор може додавати товари, змінювати опис, ціну, знижку та категорію.</p>
+</section>
+
+<div class="page-actions">
+    <a class="btn-primary" asp-controller="Admin" asp-action="CreateProduct">Додати товар</a>
+    <a class="btn-secondary" asp-controller="Admin" asp-action="Stocks">Керувати залишками</a>
+</div>
+
+<form method="get" class="filter-panel">
+    <input type="text" name="search" value="@ViewBag.Search" placeholder="Пошук товару..." />
+    <button type="submit">Знайти</button>
+</form>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Категорія</th>
+            <th>Виробник</th>
+            <th>Ціна</th>
+            <th>Знижка</th>
+            <th>Рецепт</th>
+            <th>Залишок</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.ProductCategory?.Name</td>
+                <td>@product.Manufacturer</td>
+                <td>@product.Price грн</td>
+                <td>@(product.DiscountPrice != null ? product.DiscountPrice + " грн" : "-")</td>
+                <td>@(product.IsPrescriptionRequired ? "Так" : "Ні")</td>
+                <td>@product.ProductStocks.Sum(s => s.Quantity) шт.</td>
+                <td>
+                    <a class="btn-small" asp-controller="Admin" asp-action="EditProduct" asp-route-id="@product.Id">Редагувати</a>
+                    <a class="btn-small" asp-controller="Admin" asp-action="Stocks" asp-route-productId="@product.Id">Залишки</a>
+                    <a class="btn-small" asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">Перегляд</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

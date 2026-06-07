@@ -1,0 +1,258 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var isChatPage = currentController == "Chat";
+}
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AIPharma</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AIPharma.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light site-navbar border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand brand-wrap" asp-controller="Home" asp-action="Index">
+                    <span class="brand-logo">✚</span>
+                    <span>AIPharma</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Products" asp-action="Index">Каталог</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Products" asp-action="Discounts">Знижки</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Pharmacies" asp-action="Index">Аптеки</a>
+                        </li>
+                        @if (Context.Session.GetString("UserName") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Chat" asp-action="Index">AI-помічник</a>
+                            </li>
+                        }
+                        @if (Context.Session.GetString("UserName") != null)
+                        {
+                            @if (Context.Session.GetString("UserRole") == "Admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Адмін-панель</a>
+                                </li>
+                            }
+                        }
+                        @if (Context.Session.GetString("UserRole") == "Manager")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Manager" asp-action="Index">Панель менеджера</a>
+                            </li>
+                        }
+
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        @if (Context.Session.GetString("UserName") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-success fw-bold" asp-controller="Profile" asp-action="Index">
+                                    @Context.Session.GetString("UserName")
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Вихід</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Вхід</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Реєстрація</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - AIPharma
+        </div>
+    </footer>
+
+    @if (Context.Session.GetString("UserName") != null && !isChatPage)
+{
+    <div id="floatingChat" class="floating-chat">
+        <div class="floating-chat-header" onclick="toggleFloatingChat()">
+            <span>AIPharma помічник</span>
+            <span id="floatingChatIcon">▲</span>
+        </div>
+
+        <div id="floatingChatBody" class="floating-chat-body">
+            <div id="floatingChatMessages" class="floating-chat-messages">
+                <div class="floating-assistant-message">
+                    <strong>AIPharma:</strong>
+                    <p>Вітаю! Можу допомогти з товарами, аптеками, знижками та замовленнями.</p>
+                </div>
+            </div>
+
+            <div class="floating-chat-input-row">
+                <input id="floatingChatInput" type="text" placeholder="Напишіть питання..." />
+                <button type="button" onclick="sendFloatingChatMessage()">➤</button>
+            </div>
+
+            <a class="floating-chat-history" asp-controller="Chat" asp-action="Index">
+                Відкрити історію діалогів
+            </a>
+        </div>
+    </div>
+}
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        let floatingChatSessionId = null;
+
+        document.addEventListener("DOMContentLoaded", function () {
+        const body = document.getElementById("floatingChatBody");
+        const icon = document.getElementById("floatingChatIcon");
+
+        if (!body || !icon) return;
+
+        const collapsed = localStorage.getItem("aipharma_chat_collapsed");
+
+        if (collapsed === "true") {
+        body.style.display = "none";
+        icon.textContent = "▼";
+        } else {
+        body.style.display = "block";
+        icon.textContent = "▲";
+        }
+        });
+
+        function toggleFloatingChat() {
+        const body = document.getElementById("floatingChatBody");
+        const icon = document.getElementById("floatingChatIcon");
+
+        if (!body || !icon) return;
+
+        if (body.style.display === "none") {
+        body.style.display = "block";
+        icon.textContent = "▲";
+        localStorage.setItem("aipharma_chat_collapsed", "false");
+        } else {
+        body.style.display = "none";
+        icon.textContent = "▼";
+        localStorage.setItem("aipharma_chat_collapsed", "true");
+        }
+        }
+
+        async function sendFloatingChatMessage() {
+        const input = document.getElementById("floatingChatInput");
+        const messages = document.getElementById("floatingChatMessages");
+
+        if (!input || !messages) return;
+
+        const question = input.value.trim();
+
+        if (!question) return;
+
+        addFloatingMessage("user", question, "Ви");
+        input.value = "";
+
+        const loading = document.createElement("div");
+        loading.className = "floating-assistant-message";
+        loading.innerHTML = "<strong>AIPharma:</strong><p>Обробляю запит...</p>";
+        messages.appendChild(loading);
+        messages.scrollTop = messages.scrollHeight;
+
+        const response = await fetch("/Chat/Send", {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+        question: question,
+        sessionId: floatingChatSessionId
+        })
+        });
+
+        loading.remove();
+
+        if (!response.ok) {
+        addFloatingMessage("assistant", "Сталася помилка або потрібно увійти в систему.", "AIPharma", "ERROR");
+        return;
+        }
+
+        const result = await response.json();
+
+        floatingChatSessionId = result.sessionId;
+
+        addFloatingMessage("assistant", result.answer, "AIPharma", result.source);
+        }
+
+        function addFloatingMessage(type, text, sender, source) {
+        const messages = document.getElementById("floatingChatMessages");
+
+        const div = document.createElement("div");
+
+        if (type === "user") {
+        div.className = "floating-user-message";
+        div.innerHTML = `<strong>${sender}:</strong><p>${escapeFloatingHtml(text)}</p>`;
+        } else {
+        div.className = "floating-assistant-message";
+        div.innerHTML = `<strong>${sender} <span class="floating-source">${source ?? ""}</span>:</strong><p>${escapeFloatingHtml(text)}</p>`;
+        }
+
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+        }
+
+        function escapeFloatingHtml(text) {
+        return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+        }
+
+        document.addEventListener("keydown", function (event) {
+        const input = document.getElementById("floatingChatInput");
+
+        if (input && document.activeElement === input && event.key === "Enter") {
+        sendFloatingChatMessage();
+        }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

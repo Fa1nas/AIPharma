@@ -1,0 +1,68 @@
+﻿@model AIPharma.Models.Product
+
+@{
+    ViewData["Title"] = "Редагувати товар";
+    var categories = ViewBag.Categories as List<AIPharma.Models.ProductCategory>;
+}
+
+<section class="page-header">
+    <h1>Редагувати товар</h1>
+    <p>Зміна назви, опису, ціни, знижки та категорії товару.</p>
+</section>
+
+<section class="form-section">
+    <div class="form-card">
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        <form method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+
+            <label>Назва товару</label>
+            <input type="text" name="name" value="@Model.Name" />
+
+            <label>Категорія</label>
+            <select name="productCategoryId">
+                @foreach (var category in categories ?? new List<AIPharma.Models.ProductCategory>())
+                {
+                    if (Model.ProductCategoryId == category.Id)
+                    {
+                        <option value="@category.Id" selected>@category.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                }
+            </select>
+
+            <label>Виробник</label>
+            <input type="text" name="manufacturer" value="@Model.Manufacturer" />
+
+            <label>Опис</label>
+            <textarea name="description" rows="5">@Model.Description</textarea>
+
+            <label>Ціна, грн</label>
+            <input type="number" name="price" min="0" step="0.01" value="@Model.Price" />
+
+            <label>Ціна зі знижкою, грн</label>
+            <input type="number" name="discountPrice" min="0" step="0.01" value="@Model.DiscountPrice" />
+
+            <label class="checkbox-row">
+                @if (Model.IsPrescriptionRequired)
+                {
+                    <input type="checkbox" name="isPrescriptionRequired" value="true" checked />
+                }
+                else
+                {
+                    <input type="checkbox" name="isPrescriptionRequired" value="true" />
+                }
+                Рецептурний товар
+            </label>
+
+            <button type="submit" class="btn-primary">Зберегти зміни</button>
+        </form>
+    </div>
+</section>

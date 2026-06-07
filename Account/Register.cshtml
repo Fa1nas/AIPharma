@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Реєстрація";
+}
+
+<section class="auth-wrapper">
+    <div class="auth-card">
+        <h1>Реєстрація</h1>
+        <p>Створіть обліковий запис, щоб оформлювати замовлення, зберігати обрані товари та користуватися AI-помічником.</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        <form method="post">
+            <label>ПІБ</label>
+            <input type="text" name="fullName" placeholder="Наприклад: Іван Петренко" />
+
+            <label>Електронна пошта</label>
+            <input type="email" name="email" placeholder="email@example.com" />
+
+            <label>Пароль</label>
+            <input type="password" name="password" placeholder="Введіть пароль" />
+
+            <button type="submit" class="btn-primary full-width">Зареєструватися</button>
+        </form>
+
+        <p class="auth-bottom">
+            Вже маєте акаунт?
+            <a asp-controller="Account" asp-action="Login">Увійти</a>
+        </p>
+    </div>
+</section>

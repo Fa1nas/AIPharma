@@ -1,0 +1,63 @@
+﻿@model List<AIPharma.Models.Favorite>
+
+@{
+    ViewData["Title"] = "Обрані товари";
+}
+
+<section class="page-header">
+    <h1>Обрані товари</h1>
+    <p>Товари, які користувач додав до списку обраного.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="note-section">
+        <p>Список обраних товарів порожній.</p>
+        <a class="btn-primary" asp-controller="Products" asp-action="Index">Перейти до каталогу</a>
+    </div>
+}
+else
+{
+    <div class="product-grid">
+        @foreach (var item in Model)
+        {
+            var product = item.Product;
+            if (product == null)
+            {
+                continue;
+            }
+
+            <div class="product-card">
+                <div class="product-image-box">
+                    <img src="@product.ImagePath"
+                         alt="@product.Name"
+                         referrerpolicy="no-referrer"
+                         onerror="this.src='/images/products/default.png'" />
+                </div>
+
+                <h3>@product.Name</h3>
+                <p class="category">@product.ProductCategory?.Name</p>
+                <p class="manufacturer">@product.Manufacturer</p>
+
+                <div class="price-block">
+                    @if (product.DiscountPrice != null)
+                    {
+                        <span class="old-price">@product.Price грн</span>
+                        <span class="discount-price">@product.DiscountPrice грн</span>
+                    }
+                    else
+                    {
+                        <span class="price">@product.Price грн</span>
+                    }
+                </div>
+
+                <p class="stock">Загальна наявність: @product.ProductStocks.Sum(s => s.Quantity) шт.</p>
+
+                <div class="card-actions">
+                    <a class="btn-primary" asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">Детальніше</a>
+                    <a class="btn-secondary" asp-controller="Profile" asp-action="RemoveFavorite" asp-route-productId="@product.Id">Видалити</a>
+                </div>
+            </div>
+        }
+    </div>
+}

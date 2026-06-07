@@ -1,0 +1,60 @@
+﻿@model List<AIPharma.Models.AiCachedAnswer>
+
+@{
+    ViewData["Title"] = "Кеш AI-відповідей";
+}
+
+<section class="page-header">
+    <h1>Кеш AI-відповідей</h1>
+    <p>Відповіді, які система зберігає після AI-запиту та повторно використовує для однакових питань.</p>
+</section>
+
+<div class="page-actions">
+    <form asp-controller="Admin" asp-action="ClearAiCache" method="post" class="inline-form">
+        <button type="submit" class="btn-secondary danger-btn">
+            Очистити весь кеш
+        </button>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="note-section">
+        <p>Кешованих відповідей поки що немає.</p>
+    </div>
+}
+else
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Нормалізоване питання</th>
+                <th>Відповідь</th>
+                <th>Використань</th>
+                <th>Створено</th>
+                <th>Останнє використання</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.NormalizedQuestion</td>
+                    <td>@(item.Answer.Length > 140 ? item.Answer.Substring(0, 140) + "..." : item.Answer)</td>
+                    <td>@item.UseCount</td>
+                    <td>@item.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@item.LastUsedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <form asp-controller="Admin" asp-action="DeleteCachedAnswer" method="post" class="inline-form">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn-small danger-btn">Видалити</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

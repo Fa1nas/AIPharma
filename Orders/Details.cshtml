@@ -1,0 +1,63 @@
+﻿@model AIPharma.Models.Order
+
+@{
+    ViewData["Title"] = "Деталі замовлення";
+}
+
+<section class="page-header">
+    <h1>Замовлення №@Model.Id</h1>
+    <p>Інформація про оформлене замовлення в аптеці AIPharma.</p>
+</section>
+
+<section class="profile-grid">
+    <div class="profile-card">
+        <h3>Основна інформація</h3>
+        <p><strong>Статус:</strong> @Model.Status</p>
+        <p><strong>Дата:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</p>
+        <p><strong>Сума:</strong> @Model.TotalAmount грн</p>
+        <p><strong>Оплата:</strong> @Model.PaymentType</p>
+    </div>
+
+    <div class="profile-card">
+        <h3>Аптека для отримання</h3>
+        <p><strong>Назва:</strong> @Model.Pharmacy?.Name</p>
+        <p><strong>Адреса:</strong> @Model.Pharmacy?.Address</p>
+        <p><strong>Телефон:</strong> @Model.Pharmacy?.Phone</p>
+        <p><strong>Графік:</strong> @Model.Pharmacy?.WorkSchedule</p>
+    </div>
+</section>
+
+<section class="note-section">
+    <h2>Товари в замовленні</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Кількість</th>
+                <th>Ціна за одиницю</th>
+                <th>Сума</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Product?.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice грн</td>
+                    <td>@(item.UnitPrice * item.Quantity) грн</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<section class="note-section">
+    <p>
+        Оплата замовлення здійснюється безпосередньо під час отримання товару
+        в обраній аптеці готівкою або банківською карткою.
+    </p>
+
+    <a class="btn-primary" asp-controller="Orders" asp-action="Index">До моїх замовлень</a>
+</section>

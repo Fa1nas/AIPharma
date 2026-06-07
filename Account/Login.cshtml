@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Вхід";
+}
+
+<section class="auth-wrapper">
+    <div class="auth-card">
+        <h1>Вхід</h1>
+        <p>Увійдіть до системи AIPharma для доступу до особистого кабінету.</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        <form method="post">
+            <label>Електронна пошта</label>
+            <input type="email" name="email" placeholder="email@example.com" />
+
+            <label>Пароль</label>
+            <input type="password" name="password" placeholder="Введіть пароль" />
+
+            <button type="submit" class="btn-primary full-width">Увійти</button>
+        </form>
+
+        <p class="auth-bottom">
+            Немає акаунта?
+            <a asp-controller="Account" asp-action="Register">Зареєструватися</a>
+        </p>
+    </div>
+</section>

@@ -1,0 +1,113 @@
+﻿@model AIPharma.Models.ManagerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Панель менеджера";
+}
+
+<section class="page-header">
+    <h1>Панель менеджера</h1>
+    <p>@Model.PharmacyName — @Model.PharmacyAddress</p>
+</section>
+
+<section class="admin-stat-grid">
+    <div class="admin-stat-card">
+        <h3>@Model.OrdersCount</h3>
+        <p>Замовлень аптеки</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.TotalOrdersAmount</h3>
+        <p>Сума продажів, грн</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.ComplaintsCount</h3>
+        <p>Звернень</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.ProductsInStockCount</h3>
+        <p>Товарів у наявності</p>
+    </div>
+
+    <div class="admin-stat-card">
+        <h3>@Model.EmployeesCount</h3>
+        <p>Працівників</p>
+    </div>
+</section>
+
+<section class="admin-menu-grid">
+    <a class="admin-menu-card" asp-controller="Manager" asp-action="Stocks">
+        <h3>Склад аптеки</h3>
+        <p>Зміна кількості товарів у своїй аптеці.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Manager" asp-action="Employees">
+        <h3>Працівники</h3>
+        <p>Перегляд працівників та зміна годинної ставки.</p>
+    </a>
+
+    <a class="admin-menu-card" asp-controller="Manager" asp-action="Complaints">
+        <h3>Звернення</h3>
+        <p>Робота зі скаргами користувачів по своїй аптеці.</p>
+    </a>
+</section>
+
+<section class="note-section">
+    <h2>Найпопулярніші товари цієї аптеки</h2>
+
+    @if (!Model.PopularProducts.Any())
+    {
+        <p>Поки що немає даних по продажах.</p>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Продано</th>
+                    <th>Сума</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PopularProducts)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.QuantitySold</td>
+                        <td>@item.TotalAmount грн</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>
+
+<section class="note-section">
+    <h2>Зарплата працівників аптеки</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Працівник</th>
+                <th>Посада</th>
+                <th>Ставка</th>
+                <th>Години</th>
+                <th>Зарплата</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.EmployeeSalaryStats)
+            {
+                <tr>
+                    <td>@item.EmployeeName</td>
+                    <td>@item.Position</td>
+                    <td>@item.HourlyRate грн</td>
+                    <td>@item.HoursWorked</td>
+                    <td>@item.Salary грн</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

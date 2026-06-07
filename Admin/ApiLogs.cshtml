@@ -1,0 +1,55 @@
+﻿@model List<AIPharma.Models.ApiRequestLog>
+
+@{
+    ViewData["Title"] = "Логи AI-запитів";
+}
+
+<section class="page-header">
+    <h1>Логи AI-запитів</h1>
+    <p>Журнал обробки запитів користувачів із зазначенням джерела відповіді.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="note-section">
+        <p>Логів поки що немає.</p>
+    </div>
+}
+else
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Користувач</th>
+                <th>Запит</th>
+                <th>Джерело</th>
+                <th>Prompt tokens</th>
+                <th>Completion tokens</th>
+                <th>Дата</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@log.Id</td>
+                    <td>@log.User?.FullName</td>
+                    <td>@(log.RequestText.Length > 80 ? log.RequestText.Substring(0, 80) + "..." : log.RequestText)</td>
+                    <td>
+                        <span class="source-label">@log.Source</span>
+                    </td>
+                    <td>@log.PromptTokens</td>
+                    <td>@log.CompletionTokens</td>
+                    <td>@log.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <a class="btn-small" asp-controller="Admin" asp-action="ApiLogDetails" asp-route-id="@log.Id">
+                            Деталі
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

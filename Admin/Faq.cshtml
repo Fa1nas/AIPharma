@@ -1,0 +1,45 @@
+﻿@model List<AIPharma.Models.FaqAnswer>
+
+@{
+    ViewData["Title"] = "FAQ / база знань";
+}
+
+<section class="page-header">
+    <h1>FAQ / база знань AI</h1>
+    <p>Готові універсальні відповіді, які використовуються перед зверненням до API великої мовної моделі.</p>
+</section>
+
+<div class="page-actions">
+    <a class="btn-primary" asp-controller="Admin" asp-action="CreateFaq">Додати відповідь</a>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Категорія</th>
+            <th>Питання</th>
+            <th>Відповідь</th>
+            <th>Використань</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Category</td>
+                <td>@item.Question</td>
+                <td>@(item.Answer.Length > 120 ? item.Answer.Substring(0, 120) + "..." : item.Answer)</td>
+                <td>@item.UseCount</td>
+                <td>
+                    <a class="btn-small" asp-controller="Admin" asp-action="EditFaq" asp-route-id="@item.Id">Редагувати</a>
+
+                    <form asp-controller="Admin" asp-action="DeleteFaq" method="post" class="inline-form">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn-small danger-btn">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,49 @@
+﻿@model List<AIPharma.Models.ChatSession>
+
+@{
+    ViewData["Title"] = "AI-діалоги";
+}
+
+<section class="page-header">
+    <h1>AI-діалоги користувачів</h1>
+    <p>Історія діалогових сесій користувачів з інтелектуальним помічником AIPharma.</p>
+</section>
+
+@if (!Model.Any())
+{
+    <div class="note-section">
+        <p>AI-діалогів поки що немає.</p>
+    </div>
+}
+else
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Користувач</th>
+                <th>Назва сесії</th>
+                <th>Кількість повідомлень</th>
+                <th>Дата створення</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var session in Model)
+            {
+                <tr>
+                    <td>@session.Id</td>
+                    <td>@session.User?.FullName</td>
+                    <td>@session.Title</td>
+                    <td>@session.Messages.Count</td>
+                    <td>@session.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <a class="btn-small" asp-controller="Admin" asp-action="AiDialogDetails" asp-route-id="@session.Id">
+                            Переглянути
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

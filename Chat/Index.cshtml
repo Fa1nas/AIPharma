@@ -1,0 +1,166 @@
+﻿@model List<AIPharma.Models.ChatSession>
+
+@{
+    ViewData["Title"] = "AI-помічник";
+    int? activeSessionId = ViewBag.SessionId as int?;
+}
+
+<section class="page-header">
+    <h1>AI-помічник AIPharma</h1>
+    <p>
+        Помічник відповідає на питання про товари, аптеки, замовлення, знижки та роботу сайту.
+        Спочатку система шукає відповідь у базі знань, а потім використовує AI-модуль.
+    </p>
+</section>
+
+<section class="chat-page">
+    <aside class="chat-sessions">
+        <h3>Мої діалоги</h3>
+
+        <a class="btn-primary full-width" asp-controller="Chat" asp-action="Index">Нова консультація</a>
+
+        @if (!Model.Any())
+        {
+            <p class="empty-text">Діалогів поки що немає.</p>
+        }
+        else
+        {
+            <div class="session-list">
+                @foreach (var session in Model)
+                {
+                    <a class="session-item @(activeSessionId == session.Id ? "active" : "")"
+                       asp-controller="Chat"
+                       asp-action="Index"
+                       asp-route-sessionId="@session.Id">
+                        <span>@session.Title</span>
+                        <small>@session.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                    </a>
+                }
+            </div>
+        }
+    </aside>
+
+    <section class="chat-box-page">
+        <div id="chatMessages" class="chat-messages"></div>
+
+        <div class="chat-input-row">
+            <input id="chatInput" type="text" placeholder="Напишіть питання..." />
+            <button id="sendChatBtn" type="button" class="btn-primary">Надіслати</button>
+        </div>
+
+        <p class="chat-hint">
+            AI-помічник не встановлює діагноз і не призначає лікування.
+        </p>
+    </section>
+</section>
+
+<script>
+    let currentSessionId = @(activeSessionId.HasValue ? activeSessionId.Value : "null");
+
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput = document.getElementById("chatInput");
+    const sendChatBtn = document.getElementById("sendChatBtn");
+
+    async function loadMessages() {
+        if (!currentSessionId) {
+            chatMessages.innerHTML = `
+                <div class="assistant-message">
+                    <strong>AIPharma:</strong>
+                    <p>Вітаю! Я AI-помічник AIPharma. Можу допомогти з товарами, аптеками, замовленнями та знижками.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const response = await fetch(`/Chat/GetMessages?sessionId=${currentSessionId}`);
+
+        if (!response.ok) {
+            return;
+        }
+
+        const messages = await response.json();
+
+        chatMessages.innerHTML = "";
+
+        messages.forEach(message => {
+            addMessage(message.sender, message.text, message.source);
+        });
+    }
+
+    function addMessage(sender, text, source) {
+        const div = document.createElement("div");
+
+        if (sender === "User") {
+            div.className = "user-message";
+            div.innerHTML = `<strong>Ви:</strong><p>${escapeHtml(text)}</p>`;
+        } else {
+            div.className = "assistant-message";
+            div.innerHTML = `<strong>AIPharma <span class="source-label">${source}</span>:</strong><p>${escapeHtml(text)}</p>`;
+        }
+
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const question = chatInput.value.trim();
+
+        if (!question) {
+            return;
+        }
+
+        addMessage("User", question, "USER");
+        chatInput.value = "";
+
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "assistant-message";
+        loadingDiv.innerHTML = `<strong>AIPharma:</strong><p>Обробляю запит...</p>`;
+        chatMessages.appendChild(loadingDiv);
+
+        const response = await fetch("/Chat/Send", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                question: question,
+                sessionId: currentSessionId
+            })
+        });
+
+        loadingDiv.remove();
+
+        if (!response.ok) {
+            addMessage("Assistant", "Потрібно увійти в систему або сталася помилка обробки запиту.", "ERROR");
+            return;
+        }
+
+        const result = await response.json();
+
+        currentSessionId = result.sessionId;
+
+        addMessage("Assistant", result.answer, result.source);
+
+        if (!window.location.href.includes("sessionId=")) {
+            const newUrl = `/Chat/Index?sessionId=${currentSessionId}`;
+            window.history.replaceState({}, "", newUrl);
+        }
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;");
+    }
+
+    sendChatBtn.addEventListener("click", sendMessage);
+
+    chatInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+
+    loadMessages();
+</script>

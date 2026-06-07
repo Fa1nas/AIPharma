@@ -1,0 +1,53 @@
+﻿@model List<AIPharma.Models.Complaint>
+
+@{
+    ViewData["Title"] = "Мої звернення";
+}
+
+<section class="page-header">
+    <h1>Мої звернення</h1>
+    <p>Список скарг та звернень, які користувач залишив щодо роботи аптек AIPharma.</p>
+</section>
+
+<div class="page-actions">
+    <a class="btn-primary" asp-controller="Complaints" asp-action="Create">Створити звернення</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="note-section">
+        <p>У вас поки що немає звернень.</p>
+    </div>
+}
+else
+{
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Аптека</th>
+                <th>Тема</th>
+                <th>Статус</th>
+                <th>Дата</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var complaint in Model)
+            {
+                <tr>
+                    <td>@complaint.Id</td>
+                    <td>@complaint.Pharmacy?.Name</td>
+                    <td>@complaint.Title</td>
+                    <td>@complaint.Status</td>
+                    <td>@complaint.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <a class="btn-small" asp-controller="Complaints" asp-action="Details" asp-route-id="@complaint.Id">
+                            Деталі
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,76 @@
+﻿@model List<AIPharma.Models.ProductStock>
+
+@{
+    ViewData["Title"] = "Керування залишками";
+    var products = ViewBag.Products as List<AIPharma.Models.Product>;
+    var pharmacies = ViewBag.Pharmacies as List<AIPharma.Models.Pharmacy>;
+}
+
+<section class="page-header">
+    <h1>Керування залишками</h1>
+    <p>Адміністратор може змінювати кількість товарів у кожній аптеці.</p>
+</section>
+
+<form method="get" class="filter-panel">
+    <select name="productId">
+        <option value="">Усі товари</option>
+        @foreach (var product in products ?? new List<AIPharma.Models.Product>())
+        {
+            if (ViewBag.ProductId == product.Id)
+            {
+                <option value="@product.Id" selected>@product.Name</option>
+            }
+            else
+            {
+                <option value="@product.Id">@product.Name</option>
+            }
+        }
+    </select>
+
+    <select name="pharmacyId">
+        <option value="">Усі аптеки</option>
+        @foreach (var pharmacy in pharmacies ?? new List<AIPharma.Models.Pharmacy>())
+        {
+            if (ViewBag.PharmacyId == pharmacy.Id)
+            {
+                <option value="@pharmacy.Id" selected>@pharmacy.Name</option>
+            }
+            else
+            {
+                <option value="@pharmacy.Id">@pharmacy.Name</option>
+            }
+        }
+    </select>
+
+    <button type="submit">Фільтрувати</button>
+</form>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Категорія</th>
+            <th>Аптека</th>
+            <th>Поточна кількість</th>
+            <th>Нова кількість</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stock in Model)
+        {
+            <tr>
+                <td>@stock.Product?.Name</td>
+                <td>@stock.Product?.ProductCategory?.Name</td>
+                <td>@stock.Pharmacy?.Name</td>
+                <td>@stock.Quantity</td>
+                <td>
+                    <form asp-controller="Admin" asp-action="UpdateStock" method="post" class="order-form">
+                        <input type="hidden" name="stockId" value="@stock.Id" />
+                        <input type="number" name="quantity" value="@stock.Quantity" min="0" class="quantity-input" />
+                        <button type="submit" class="btn-small order-btn">Зберегти</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

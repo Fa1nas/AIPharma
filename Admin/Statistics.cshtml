@@ -1,0 +1,146 @@
+﻿@model AIPharma.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Статистика";
+}
+
+<section class="page-header">
+    <h1>Статистика AIPharma</h1>
+    <p>Аналітичні дані по аптеках, товарах, зверненнях, AI-модулю та працівниках.</p>
+</section>
+
+<section class="note-section">
+    <h2>Замовлення по аптеках</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Аптека</th>
+                <th>Кількість замовлень</th>
+                <th>Сума продажів</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrdersByPharmacy)
+            {
+                <tr>
+                    <td>@item.PharmacyName</td>
+                    <td>@item.OrdersCount</td>
+                    <td>@item.TotalAmount грн</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<section class="note-section">
+    <h2>Найпопулярніші товари</h2>
+
+    @if (!Model.PopularProducts.Any())
+    {
+        <p>Поки що немає даних по продажах.</p>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Продано одиниць</th>
+                    <th>Сума</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PopularProducts)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.QuantitySold</td>
+                        <td>@item.TotalAmount грн</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>
+
+<section class="note-section">
+    <h2>Звернення по аптеках</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Аптека</th>
+                <th>Кількість звернень</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ComplaintsByPharmacy)
+            {
+                <tr>
+                    <td>@item.PharmacyName</td>
+                    <td>@item.ComplaintsCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<section class="note-section">
+    <h2>Статистика AI-відповідей</h2>
+
+    @if (!Model.AiStats.Any())
+    {
+        <p>Поки що AI-модуль не має журналу запитів.</p>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Джерело відповіді</th>
+                    <th>Кількість</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.AiStats)
+                {
+                    <tr>
+                        <td>@item.Source</td>
+                        <td>@item.Count</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>
+
+<section class="note-section">
+    <h2>Розрахунок зарплати працівників</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Працівник</th>
+                <th>Аптека</th>
+                <th>Посада</th>
+                <th>Ставка за годину</th>
+                <th>Години</th>
+                <th>Зарплата</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.EmployeeSalaryStats)
+            {
+                <tr>
+                    <td>@item.EmployeeName</td>
+                    <td>@item.PharmacyName</td>
+                    <td>@item.Position</td>
+                    <td>@item.HourlyRate грн</td>
+                    <td>@item.HoursWorked</td>
+                    <td>@item.Salary грн</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

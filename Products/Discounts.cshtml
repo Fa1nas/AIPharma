@@ -1,0 +1,67 @@
+﻿@model List<AIPharma.Models.Product>
+
+@{
+    ViewData["Title"] = "Товари зі знижкою";
+}
+
+<section class="page-header">
+    <h1>Товари зі знижкою</h1>
+    <p>Актуальні пропозиції мережі аптек AIPharma.</p>
+</section>
+
+@{
+    var categories = ViewBag.Categories as List<AIPharma.Models.ProductCategory>;
+}
+
+<form method="get" class="filter-panel advanced-filter">
+    <input type="text" name="search" value="@ViewBag.Search" placeholder="Пошук товару зі знижкою..." />
+
+    <select name="categoryId">
+        <option value="">Усі категорії</option>
+        @foreach (var category in categories ?? new List<AIPharma.Models.ProductCategory>())
+        {
+            if (ViewBag.CategoryId == category.Id)
+            {
+                <option value="@category.Id" selected>@category.Name</option>
+            }
+            else
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        }
+    </select>
+
+    <input type="number" name="minPrice" value="@ViewBag.MinPrice" placeholder="Ціна від" min="0" step="1" />
+    <input type="number" name="maxPrice" value="@ViewBag.MaxPrice" placeholder="Ціна до" min="0" step="1" />
+
+    <button type="submit">Фільтрувати</button>
+</form>
+
+<div class="product-grid">
+    @foreach (var product in Model)
+    {
+        <div class="product-card">
+            <div class="product-image-box sale">
+                <img src="@product.ImagePath"
+                     alt="@product.Name"
+                     referrerpolicy="no-referrer"
+                     onerror="this.src='/images/products/default.png'" />
+            </div>
+
+            <h3>@product.Name</h3>
+            <p class="category">@product.ProductCategory?.Name</p>
+            <p class="manufacturer">@product.Manufacturer</p>
+
+            <div class="price-block">
+                <span class="old-price">@product.Price грн</span>
+                <span class="discount-price">@product.DiscountPrice грн</span>
+            </div>
+
+            <p class="stock">Є в @product.ProductStocks.Count аптеках</p>
+
+            <a class="btn-primary" asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">
+                Переглянути
+            </a>
+        </div>
+    }
+</div>
